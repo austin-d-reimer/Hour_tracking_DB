@@ -24,7 +24,7 @@ class DBOperations:
                 db.execute(
                     f""" CREATE TABLE IF NOT EXISTS {self.table_name}
                         (id integer primary key autoincrement not null,
-                        date string not null,
+                        date integer not null,
                         startTime string,
                         endTime string,
                         breakLength integer,
@@ -82,6 +82,19 @@ class DBOperations:
             return return_value
         except Exception as error:
             print(f"DBOperations read_from_db {error}")
+
+    def get_rows_from_db(self, startDate, endDate):
+        try:
+            sql = f"""
+                SELECT date, startTime, endTime, location, breakLength
+                FROM {self.table_name}
+                WHERE date BETWEEN {startDate} AND {endDate}"""
+            with Open_DB(self.db_name) as db:
+                db.execute(sql)
+                return_value = db.fetchall()
+            return return_value
+        except Exception as error:
+            print(f"DBOperations get_rows_from_db {error}")
 
     def delete_all_rows(self):
         """
